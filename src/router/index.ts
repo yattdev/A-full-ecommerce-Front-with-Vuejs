@@ -1,9 +1,10 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import Home from "../views/Home.vue";
-import ProduitDetail from "../components/ProduitDetail.vue";
-import CategorieList from "../components/CategorieList.vue";
-import TreeMenu from "../components/TreeMenu.vue";
+import ProduitDetails from "../views/ProduitDetails.vue";
+import Categorie from "../views/Categorie.vue";
+import Search from "../views/Search.vue";
+import Cart from "../views/Cart.vue";
 
 Vue.use(VueRouter);
 
@@ -25,17 +26,22 @@ const routes: Array<RouteConfig> = [
   {
     path: "/produits/:id",
     name: "Produit",
-    component: ProduitDetail
+    component: ProduitDetails
   },
   {
-    path: "/categories/",
-    name: "CategorieList",
-    component: CategorieList
+    path: "/categories/:id?",
+    name: "Categorie",
+    component: Categorie
   },
   {
-    path: "/treemenu/",
-    name: "TreeMenu",
-    component: TreeMenu
+    path: "/search",
+    name: "Search",
+    component: Search
+  },
+  {
+    path: "/cart",
+    name: "Cart",
+    component: Cart
   }
 ];
 

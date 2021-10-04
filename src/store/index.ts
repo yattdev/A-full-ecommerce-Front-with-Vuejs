@@ -13,6 +13,7 @@ export default new Vuex.Store({
     isLoading: false
   },
   mutations: {
+    // Initialize produit cart value
     initializeStore(state) {
       if (localStorage.getItem("cart")) {
         state.cart = JSON.parse(localStorage.getItem("cart") || "{}");
@@ -21,16 +22,32 @@ export default new Vuex.Store({
       }
     },
 
+    // test if produit exist in cart
+    isItemInCart(state: any, item: any) {
+      var exist = state.cart.items.filter(
+        (i: any) => i["produit"]["id"] === item.quantity.id
+      );
+
+      return exist;
+    },
+
+    // Add item to cart, when user click on 'Add to cart'
     addToCard(state: any, item: any) {
       // test if produit does'nt exist in cart
       const exist = state.cart.items.filter(
-        (i: any) => i["produit"]["id"] === item.quantity.id
+        (i: any) => i["produit"]["id"] === item.produit.id
       );
 
       if (exist.length) {
         // increment item quantity value when (it exist in cart)=length>0
+        state.cart.items.forEach((elt: any) =>
+          console.log("Avant: " + elt.quantity)
+        );
         exist[0]["quantity"] =
           parseInt(exist[0]["quantity"]) + parseInt(item.quantity);
+        state.cart.items.forEach((elt: any) =>
+          console.log("apres: " + elt.quantity)
+        );
       } else {
         state.cart.items.push(item); // push item in if not exist
       }
@@ -39,6 +56,40 @@ export default new Vuex.Store({
       localStorage.setItem("cart", JSON.stringify(state.cart));
     },
 
+    // Remove Item from Cart
+    removeFromCart(state: any, item: any) {
+      const exist = state.cart.items.filter(
+        (i: any) => i["produit"]["id"] === item.produit.id
+      );
+
+      if (exist[0]["quantity"] === 1) {
+        // delete item from cart
+      } else if (exist[0]["quantity"] > 1) {
+        // state.cart.items.forEach((elt: any) =>
+        // console.log("Avant: " + elt.quantity)
+        // );
+        exist[0]["quantity"] = parseInt(exist[0]["quantity"]) - 1;
+      }
+
+      // Refresh localStorage cart value
+      localStorage.setItem("cart", JSON.stringify(state.cart));
+    },
+
+    // update Item quantity from cart
+    setItemQte(state: any, item: any) {
+      const exist = state.cart.items.filter(
+        (i: any) => i["produit"]["id"] === item.produit.id
+      );
+
+      if (exist.length) {
+        exist[0]["quantity"] = parseInt(item.quantity);
+      }
+
+      // Refresh localStorage cart value
+      localStorage.setItem("cart", JSON.stringify(state.cart));
+    },
+
+    // Toggle loading feature
     setIsLoading(state, status) {
       state.isLoading = status;
     }

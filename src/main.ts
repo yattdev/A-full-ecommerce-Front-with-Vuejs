@@ -5,7 +5,7 @@ import router from "./router";
 import store from "./store";
 import axios from "axios";
 import VueAxios from "vue-axios";
-import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
+import { BootstrapVue, IconsPlugin, PaginationPlugin } from "bootstrap-vue";
 
 // Import Bootstrap an BootstrapVue CSS files (order is important)
 import "bootstrap/dist/css/bootstrap.css";
@@ -20,6 +20,9 @@ Vue.use(VueAxios, axios); // Use axios in Vue 3
 Vue.use(BootstrapVue);
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin);
+
+// Use BootstrapVue pagination
+Vue.use(PaginationPlugin);
 
 Vue.config.productionTip = false;
 

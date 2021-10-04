@@ -10,25 +10,22 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
                 <ul class="navbar-nav m-auto">
                     <li class="nav-item active">
-                        <router-link class="nav-link" to="/current">Home <span class="sr-only">(current)</span></router-link>
+                        <router-link class="nav-link" to="/">Home <span class="sr-only">(current)</span></router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link class="nav-link" to="/category">Categories</router-link>
+                        <router-link class="nav-link" to="/categories">produits</router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link class="nav-link" to="/product">Product</router-link>
-                    </li>
-                    <li class="nav-item">
-                        <router-link class="nav-link" to="/product">Cart</router-link>
+                        <router-link class="nav-link" to="/cart">Cart</router-link>
                     </li>
                     <li class="nav-item">
                         <router-link class="nav-link" to="/contact">Contact</router-link>
                     </li>
                 </ul>
 
-                <form class="form-inline my-2 my-lg-0">
+                <form class="form-inline my-2 my-lg-0" action="/search">
                     <div class="input-group input-group-sm">
-                        <input type="text" class="form-control" placeholder="Search...">
+                        <input type="text" class="form-control" placeholder="Search..." name="query">
                         <div class="input-group-append">
                             <button type="button" class="btn btn-secondary btn-number">
                                 <i class="fa fa-search"></i>
@@ -62,7 +59,7 @@
 
     <section class="section">
         <div>
-            <b-overlay :show="isLoading" :class="{'overlay_loading': isLoading}" rounded="sm"></b-overlay>
+            <overlay :opened="true" :visible="true" @closed="isLoading = false" animate="bounce"></overlay>
         </div>
         <router-view/>
     </section>
@@ -124,6 +121,7 @@
 
 <script charset="utf-8">
 import { Vue } from 'vue-property-decorator';
+import Overlay from 'vuejs-overlay';
 export default Vue.extend({
     data() {
         return {
@@ -133,6 +131,9 @@ export default Vue.extend({
             },
             isLoading: Boolean
         }
+    },
+    components: {
+        "overlay": Overlay,
     },
     beforeCreate(){
         this.$store.commit('initializeStore');
@@ -155,14 +156,3 @@ export default Vue.extend({
 
 });
 </script>
-
-<style>
-    .overlay_loading {
-        position: absolute;
-        left: 50%;
-        margin-left: -50px;
-        margin: 8px;
-        height: 64px;
-        width: 64px;
-    }
-</style>
