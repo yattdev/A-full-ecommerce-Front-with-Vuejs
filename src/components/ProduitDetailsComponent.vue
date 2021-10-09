@@ -1,19 +1,6 @@
 <template>
     <div class="ProduitDetail">
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="/">Home</a></li>
-                            <li class="breadcrumb-item"><a href="category.html">Category</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Product</li>
-                        </ol>
-                    </nav>
-                </div>
-            </div>
-        </div>
-        <div class="container">
+        <div class="container mt-5">
             <div class="row">
                 <!-- Image -->
                 <div class="col-12 col-lg-6">
@@ -31,31 +18,15 @@
                 <div class="col-12 col-lg-6 add_to_cart_block">
                     <div class="card bg-light mb-3">
                         <div class="card-body">
-                            <p class="price">{{ produit.prix_produit }} $</p>
-                            <p class="price_discounted">{{ produit.prix_produit }} $</p>
+                            <h2 class="name">{{ produit.nom_produit }}</h2>
+                            <p class="price">${{ getItemTotal(produit).toFixed(2) }}</p>
+                            <p class="price_discounted">discounted: {{ produit.prix_produit }} $</p>
                             <form method="get" action="cart.html">
-                                <div class="form-group">
-                                    <label for="colors">Color</label>
-                                    <select class="custom-select" id="colors">
-                                        <option selected>Select</option>
-                                        <option value="1">Blue</option>
-                                        <option value="2">Red</option>
-                                        <option value="3">Green</option>
-                                    </select>
-                                </div>
                                 <div class="form-group">
                                     <label>Quantity :</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
-                                            <button type="button" class="quantity-left-minus btn btn-danger btn-number"  data-type="minus" data-field="">
-                                                <i class="fa fa-minus"></i>
-                                            </button>
-                                        </div>
-                                        <input type="text" class="form-control"  id="quantity" name="quantity" min="1" max="100" v-model="quantity">
-                                        <div class="input-group-append">
-                                            <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus" data-field="">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
+                                            <b-form-spinbutton id="demo-sb" v-model="quantity" min="1" max="100"></b-form-spinbutton>
                                         </div>
                                     </div>
                                 </div>
@@ -65,7 +36,7 @@
                                     <i class="fa fa-shopping-cart"></i> Add To Cart
                                 </a>
                             </form>
-                            <div class="product_rassurance">
+                            <div class="product_rassurance mt-5">
                                 <ul class="list-inline">
                                     <li class="list-inline-item"><i class="fa fa-truck fa-2x"></i><br/>Fast delivery</li>
                                     <li class="list-inline-item"><i class="fa fa-credit-card fa-2x"></i><br/>Secure payment</li>
@@ -96,12 +67,8 @@
                     <div class="card border-light mb-3">
                         <div class="card-header bg-primary text-white text-uppercase"><i class="fa fa-align-justify"></i> Description</div>
                         <div class="card-body">
-                            <p class="card-text">
-                                produit description 1
-                            </p>
-                            <p class="card-text">
-                                produit description 2
-                            </p>
+                            <p class="card-text" v-html="produit.description_produit"> </p>
+                            <p class="card-text" v-html="produit.descriptif"> </p>
                         </div>
                     </div>
                 </div>
@@ -109,7 +76,7 @@
                 <!-- Reviews -->
                 <div class="col-12" id="reviews">
                     <div class="card border-light mb-3">
-                        <div class="card-header bg-primary text-white text-uppercase"><i class="fa fa-comment"></i> Reviews</div>
+                        <div class="card-header bg-primary text-white text-uppercase"><i class="fa fa-comment"></i> Reviews | Recommadation: {{ produit.note_recommandation }}</div>
                         <div class="card-body">
                             <div class="review">
                                 <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
@@ -205,7 +172,12 @@ export default Vue.component('ProduitDetail', {
               }
             );
             this.$store.commit('addToCard', item)
-        }
-    }
+        },
+
+        getItemTotal(produit: any){
+            return this.quantity * produit.prix_produit
+        },
+    },
+
 });
 </script>

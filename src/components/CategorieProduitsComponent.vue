@@ -1,27 +1,23 @@
 <template>
     <div class="col">
         <div class="row" id="CategorieProduitsList">
-            <div class="col-12 col-md-6 col-lg-4"
+            <div class="col-lg-4 col-md-6 d-flex align-items-stretch"
             v-for="produit in getCategorieProduits"
             v-bind:key="produit.id">
                 <div class="card">
                     <img class="card-img-top" :src="produit.thumbnail" alt="Card image cap">
                     <div class="card-body">
-                        <h4 class="card-title"><a href="product.html" title="View Product">Product title</a></h4>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <div class="row">
-                            <div class="col">
-                                <p class="btn btn-danger btn-block">99.00 $</p>
-                            </div>
-                            <div class="col">
-                                <a href="#" class="btn btn-success btn-block">Add to cart</a>
-                            </div>
+                        <h4 class="card-title"><router-link :to="'/produits/'+produit.id" title="View Product">{{ produit.nom_produit.substring(0, 30) + "..." }}</router-link></h4>
+                        <p v-html="produit.description_produit.substring(0,50)+'...'" class="card-text">{{ produit.description_produit.substring(0,50)+"..." }}</p>
+                        <div class="">
+                            <span class="btn btn-primary btn-sm px-3">{{ produit.prix_produit }}</span>
+                            <span class="btn btn-success btn-sm px-3" @click="addToCard(produit)">Add to cart</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="overflow-auto">
+        <div class="overflow-auto mt-5">
           <b-pagination
             v-model="currentPage"
             :total-rows="rows"
@@ -63,6 +59,29 @@ export default Vue.component('CategorieProduits', {
             )
         }
     },
+
+    methods: {
+        addToCard(produit) {
+            const item = {
+                produit: produit, // {'produit':{}, quantity:value}
+                quantity: 1,
+            }
+
+            this.$store.commit('addToCard', item)
+            /* this.makeToast(false) */
+            this.$bvToast.toast(
+              'Produit à bien été ajouter au panier',
+              {
+                  title: 'BootstrapVue Toast',
+                  noCloseButton: true,
+                  autoHideDelay: 5000,
+                  variant: 'success',
+                  /* appendToast: append, */
+                  autoHide: true
+              }
+            );
+        }
+    }
 
 })
 </script>

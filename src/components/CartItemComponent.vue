@@ -1,7 +1,7 @@
 <template>
         <tr class="cart-item-component">
             <td>
-                <router-link to="item.produit.id">{{ item.produit.nom_produit }}</router-link>
+                <router-link :to="'/produits/'+item.produit.id">{{ item.produit.nom_produit }}</router-link>
             </td>
             <td>{{ item.produit.prix_produit }}</td>
             <td>

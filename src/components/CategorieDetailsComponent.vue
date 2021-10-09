@@ -2,23 +2,7 @@
     <div class="CategoryList">
         <div class="container">
             <div class="row">
-                <div class="col">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><router-link to="/">Home</router-link></li>
-                            <li class="breadcrumb-item" aria-current="page"
-                            v-for="categorie in categorieList"
-                            v-bind:key="categorie.id"
-                            ><router-link to="/categorie.id"></router-link>
-                            </li>
-                        </ol>
-                    </nav>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <div class="row">
-                <div class="col-12 col-sm-3">
+                <div class="col-lg-3 col-md-3">
                     <div class="card bg-light mb-3">
                         <div class="card-header bg-primary text-white text-uppercase"><i class="fa fa-list"></i> Categories</div>
                         <ul class="list-group category_block">
