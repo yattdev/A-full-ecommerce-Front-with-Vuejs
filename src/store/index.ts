@@ -73,6 +73,9 @@ export default new Vuex.Store({
 
       if (exist[0]["quantity"] === 1) {
         // delete item from cart
+        state.cart.items = state.cart.items.filter(
+          (i: any) => i["produit"]["id"] !== item.produit.id
+        );
       } else if (exist[0]["quantity"] > 1) {
         // state.cart.items.forEach((elt: any) =>
         // console.log("Avant: " + elt.quantity)

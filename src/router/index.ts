@@ -8,6 +8,8 @@ import Search from "../views/Search.vue";
 import Cart from "../views/Cart.vue";
 import SignUp from "../views/SignUp.vue";
 import LogIn from "../views/LogIn.vue";
+import Account from "../views/Account.vue";
+import Checkout from "../views/Checkout.vue";
 
 Vue.use(VueRouter);
 
@@ -56,6 +58,21 @@ const routes: Array<RouteConfig> = [
     name: "LogIn",
     component: LogIn
   },
+  {
+    path: "/account",
+    name: "Account",
+    component: Account,
+    meta: {
+      requireLogin: true
+    }
+  },
+  {
+    path: "/cart/checkout",
+    name: "Checkout",
+    component: Checkout,
+    meta: {
+      requireLogin: true
+    }
   }
 ];
 
@@ -63,6 +80,17 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes
+});
+
+router.beforeEach((to, from, next) => {
+  if (
+    to.matched.some(record => record.meta.requireLogin) &&
+    !store.state.isAuthenticated
+  ) {
+    next({ name: "LogIn", query: { to: to.path } });
+  } else {
+    next();
+  }
 });
 
 export default router;
