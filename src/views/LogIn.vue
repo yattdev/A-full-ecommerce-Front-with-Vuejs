@@ -1,35 +1,39 @@
 <template>
-    <div class="LogIn">
-        <h3 class="text-center text-white pt-5">Login form</h3>
-        <div class="container">
-            <div id="login-row" class="row justify-content-center align-items-center">
-                <div id="login-column" class="col-md-6">
-                    <div  class="col-md-12 bg-danger" v-if="errors.length">
-                        <p v-for="error in errors" v-bind:key="error">{{ error }}</p>
-                    </div>
-                    <div id="login-box" class="col-md-12">
-                        <form @submit.prevent="submitForm" id="login-form" class="form" action="" method="post">
-                            <h3 class="text-center text-info">Login</h3>
-                            <div class="form-group">
-                                <label for="username" class="text-info">Username:</label><br>
-                                <input v-model="username" type="text" name="username" id="username" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="password" class="text-info">Password:</label><br>
-                                <input v-model="password" type="text" name="password" id="password" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="remember-me" class="text-info"><span>Remember me</span> <span><input id="remember-me" name="remember-me" type="checkbox"></span></label><br>
-                                <input type="submit" name="submit" class="btn btn-info btn-md" value="submit">
-                            </div>
-                            <div id="register-link" class="text-right">
-                                Or <router-link to="/login" class="text-info">click here</router-link> to Sign-In
-                            </div>
-                        </form>
-                    </div>
-                </div>
+    <div class="modal fade" id="modalLoginForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <form action="" @submit.prevent="submitForm" method="post">
+          <div class="modal-header text-center">
+            <h4 class="modal-title w-100 font-weight-bold">Sign in</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body mx-3">
+            <div class="form mb-3">
+              <i class="fas fa-envelope prefix grey-text"></i>
+              <label data-error="wrong" data-success="right" for="defaultForm-email">Your email</label>
+              <input v-model="email" type="email" name="email" id="defaultForm-email" class="form-control validate">
             </div>
+
+            <div class="form mb-3">
+              <i class="fas fa-lock prefix grey-text"></i>
+              <label data-error="wrong" data-success="right" for="defaultForm-pass">Your password</label>
+              <input v-model="password" name="password" type="password" id="defaultForm-pass" class="form-control validate">
+            </div>
+            <div role="alert"  class="alert alert-danger" v-if="errors.length">
+              <p v-for="error in errors" v-bind:key="error">
+               <i class="fas fa-exclamation-triangle"></i> {{ error }}
+              </p>
+            </div>
+          </div>
+          <div class="modal-footer d-flex justify-content-center">
+            <button class="btn btn-default" type="submit">Login</button>
+          </div>
+        </form>
         </div>
+      </div>
     </div>
 </template>
 
@@ -41,13 +45,13 @@ export default Vue.extend({
     name: 'LogIn',
     data(){
         return {
-            username: '',
+            email: '',
             password: '',
             errors: [],
         }
     },
     mounted(){
-        document.title = 'Log In | APTUS EDUCATION'
+        document.title = 'Log In'
     },
     methods: {
         async submitForm(){
@@ -58,8 +62,8 @@ export default Vue.extend({
 
             this.errors = []
 
-            if(this.username === ''){
-                this.errors.push('The username is missing')
+            if(this.email === ''){
+                this.errors.push('The email is missing')
             }
             if(this.password === ''){
                 this.errors.push('The password is missing')
@@ -68,7 +72,6 @@ export default Vue.extend({
             if(!this.errors.length){
                 const formData = {
                     email: this.email,
-                    username: this.username,
                     password: this.password,
                 }
 
@@ -78,7 +81,7 @@ export default Vue.extend({
                     .then(response => {
                         const csrf_token = response.data.csrf_token
                         /* add csrf_token to axios headers */
-                        console.log(csrf_token)
+                        /* console.log(csrf_token) */
                         axios.defaults.headers.common['X-CSRFToken'] = csrf_token
                     })
                     .catch(error => {
@@ -87,21 +90,26 @@ export default Vue.extend({
                     })
 
                 await axios
-                    .post("/auth/token/login/", formData)
+                    .post("/authjwt/create/", formData)
                     .then(response => {
                         /* TODO: Faire un toast pour dir afficher le msg de success */
-                        /* console.log(response.data.auth_token) */
-                        const token = response.data.auth_token
-
-                        this.$store.commit('setToken', token)
-
-                        axios.defaults.headers.common["Authorization"] = "Token" + token
+                        /* console.log(response.data.access) */
+                        /* console.log(response.data.refresh) */
+                        const token = response.data.access
+                        /* const refresh = data.refresh */
 
                         localStorage.setItem("token", token)
+                        /* localStorage.setItem("refresh", refresh) */
 
-                        const toPath = this.$route.query.to || '/cart'
+                        // Update state token and refresh
+                        this.$store.commit('setToken', token)
+                        /* this.$store.commit('setRefresh', refresh) */
 
-                        this.$router.push(toPath)
+                        axios.interceptors.request.use(config => {
+                           if (localStorage.getItem("token") != null)
+                             config.headers["Authorization"] = "Bearer " + localStorage.getItem("token");
+                           return config;
+                         });
                     })
                     .catch(error => {
                         if(error.response) {
@@ -116,8 +124,26 @@ export default Vue.extend({
                         }
                     })
                 }
-
+            this.getAuthUserData() // update user data
         },
+
+        getAuthUserData() {
+          axios
+            .get("/authusers/me/")
+            .then(response => {
+              const authenticatedUserData = JSON.stringify(response.data);
+              this.$store.commit('setAuthenticatedUserData', authenticatedUserData)
+              localStorage.setItem("authenticatedUserData",
+                      authenticatedUserData)
+              console.log("User details")
+              console.log(authenticatedUserData)
+            })
+            .then(() => window.location.reload())
+            .catch(error => {
+              console.log(error);
+            });
+        },
+
     },
 })
 </script>
