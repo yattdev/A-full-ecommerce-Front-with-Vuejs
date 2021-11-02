@@ -6,12 +6,16 @@ import store from "./store";
 import axios from "axios";
 import VueAxios from "vue-axios";
 import { BootstrapVue, IconsPlugin, PaginationPlugin } from "bootstrap-vue";
+import VueSimpleAlert from "vue-simple-alert";
+
+// Simple but cool alert(), confirm(), prompt() for Vue.js.
+Vue.use(VueSimpleAlert);
 
 // Import Bootstrap an BootstrapVue CSS files (order is important)
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 
-axios.defaults.baseURL = "http://localhost:8000";
+axios.defaults.baseURL = "http://localhost:8000/api/v1";
 Vue.use(VueAxios, axios); // Use axios in Vue 3
 
 // import "./app.scss"; // my custom scss
