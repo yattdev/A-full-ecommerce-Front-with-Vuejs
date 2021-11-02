@@ -41,13 +41,11 @@
 <script>
 import { Vue } from 'vue-property-decorator';
 import axios from "axios"
-import PopupComponent from './PopupComponent'
 
 export default Vue.component('PochettesListComponent', {
     props: ['propPochettesList', 'propAuthUserList'],
     name: 'PochettesListComponent',
     components: {
-        "delete-popup-component": PopupComponent,
     },
 
     data() {
