@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" id="modalPochetteForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    <div class="modal fade" :id="'modalUpdatePochetteForm'+title" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
       aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -13,7 +13,7 @@
           <div class="modal-body mx-3">
             <div class="mb-3">
               <label data-error="wrong" data-success="right" for="orangeForm-email">Album title</label>
-              <input v-model="title" name="title" type="title" id="orangeForm-title" class="form-control validate">
+              <input v-model="title" me="title" type="title" id="orangeForm-title" :placeholder="title" class="form-control validate">
             </div>
 
             <div class="input-group mb-3">
@@ -30,7 +30,7 @@
 
             <!-- Material unchecked -->
             <div class="form-check">
-                <input v-model="is_public" type="checkbox" class="form-check-input" id="materialUnchecked">
+                <input v-model="is_public" :placeholder="is_public" type="checkbox" class="form-check-input" id="materialUnchecked">
                 <label class="form-check-label" for="materialUnchecked">Public</label>
             </div>
 
@@ -54,13 +54,15 @@ import Vue from 'vue'
 import axios from 'axios';
 
 export default Vue.extend({
-    name: 'Pochette',
+    props: ['propPochette'],
+    name: 'UpdatePochette',
     data() {
         return {
             title: '',
-            is_public: '',
+            is_public: Boolean,
             image: '',
             errors: [],
+            pochette: {},
         }
     },
     computed: {
@@ -69,7 +71,14 @@ export default Vue.extend({
             console.log(data)
             if(data) return data
             else return {id: "", email: ""}
-        }
+        },
+    },
+
+    mounted(){
+        this.title = this.propPochette.title;
+        this.image = this.propPochette.image;
+        this.is_public = this.propPochette.is_public;
+        this.pochette = this.propPochette;
     },
 
     methods: {
@@ -83,7 +92,7 @@ export default Vue.extend({
                 this.errors.push('The image cover is missing')
             }
 
-            console.log(this.authUser.id)
+            /* console.log(this.authUser.id) */
             /* !this.errors.length */
             if(!this.errors.length){
                 var formData = new FormData();
@@ -105,10 +114,10 @@ export default Vue.extend({
                     })
                     .catch(error => {
                         if(error.response) {
-                            /* for(const property in error.response.data){ */
+                            for(const property in error.response.data){
                             this.errors.push("Something wrong ! Please reload and try again")
-                                /* this.errors.push(`$(property): $(error.response.data[property])`) */
-                            /* } */
+                                this.errors.push(`$(property): $(error.response.data[property])`)
+                            }
                             console.log(JSON.stringify(error.response.data))
                         } else if (error.message) {
                             this.errors.push('Something wrong, Please again'),
@@ -117,7 +126,7 @@ export default Vue.extend({
                     })
 
                 await axios
-                    .post("/pochettes/", formData)
+                    .put("/pochettes/"+this.pochette.id+'/'+this.pochette.slug, formData)
                     .then(response => {
                         console.log(response.status)
                     })

@@ -3,10 +3,6 @@ import VueRouter, { RouteConfig } from "vue-router";
 import store from "../store";
 import Home from "../views/Home.vue";
 import PochetteDetails from "../views/PochetteDetails.vue";
-import Search from "../views/Search.vue";
-import SignUp from "../views/SignUp.vue";
-import LogIn from "../views/LogIn.vue";
-import Account from "../views/Account.vue";
 
 Vue.use(VueRouter);
 
@@ -18,7 +14,7 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "/pochettes/:id/:slug",
-    name: "Pochette",
+    name: "pochettes",
     component: PochetteDetails
   }
 ];

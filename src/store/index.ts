@@ -10,7 +10,7 @@ export default new Vuex.Store({
     authenticatedUserData: {},
     token: "",
     refresh: "",
-    isLoading: false
+    isLoading: true
   },
   mutations: {
     // Initialize token auth

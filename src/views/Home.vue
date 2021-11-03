@@ -48,14 +48,14 @@ export default Vue.extend({
     },
 
     methods: {
-        getPochettesList() {
+       async getPochettesList() {
             this.$store.commit('setIsLoading', true)
             axios.interceptors.request.use(config => {
                if (localStorage.getItem("token") != null)
                  config.headers["Authorization"] = "Bearer " + localStorage.getItem("token");
                return config;
              });
-            axios
+            await axios
                 .get('/pochettes/')
                 .then(response => {
                         this.pochettesList = Array.from(response.data);
@@ -67,14 +67,6 @@ export default Vue.extend({
                 document.title = "Liste des pochettes"
             this.$store.commit('setIsLoading', false)
         },
-
-      makeToast() {
-        this.$bvToast.toast('Yare authenticat successfully !', {
-          title: "Authentication",
-          variant: "info",
-          solid: true
-        })
-      },
     }
 })
 </script>

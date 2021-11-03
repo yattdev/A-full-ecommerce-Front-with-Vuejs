@@ -53,6 +53,7 @@
         </div>
       </header><!-- End Header -->
 
+      <bounce-loader :loading="loading" color="#cc181e" size="50"></bounce-loader>
       <!-- Login SignIn modal vue -->
       <signup-component/>
       <create-pochette-component/>
@@ -98,14 +99,12 @@ import Overlay from 'vuejs-overlay';
 import LogIn from './views/LogIn'
 import SignUp from './views/SignUp'
 import Pochette from './views/Pochette';
+import BounceLoader from 'vue-spinner/src/BounceLoader.vue'
+
 export default Vue.extend({
     data() {
         return {
-            cart: {
-                items: [
-                ],
-            },
-            isLoading: Boolean,
+            loading: true,
         }
     },
     components: {
@@ -113,6 +112,7 @@ export default Vue.extend({
         "signup-component": SignUp,
         "signin-component": LogIn,
         "create-pochette-component": Pochette,
+        BounceLoader,
     },
     beforeCreate(){
         this.$store.commit('initializeStore');
@@ -125,19 +125,21 @@ export default Vue.extend({
             axios.defaults.headers.common['Authorization'] = ""
         }
     },
-    mounted() {
-        this.isLoading = this.$store.isLoading;
-    },
 
     computed: {
         isAuthenticated() {
             return this.$store.state.isAuthenticated
         },
+
         authUser(){
             const data = JSON.parse(localStorage.getItem('authenticatedUserData'))
             console.log(data)
             if(data) return data
             else return {id: "", email: ""}
+        },
+
+        loading_b(){
+            return this.$store.isLoading;
         }
     },
 

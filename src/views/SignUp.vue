@@ -60,7 +60,7 @@ export default Vue.extend({
         }
     },
     methods: {
-        submitForm(){
+        async submitForm(){
             this.errors = []
 
             if(this.email === ''){
@@ -80,7 +80,7 @@ export default Vue.extend({
                 }
 
                 /* First get the csrf_token from django */
-                axios
+                await axios
                     .get('/get-token')
                     .then(response => {
                         const csrf_token = response.data.csrf_token
@@ -92,7 +92,7 @@ export default Vue.extend({
                         console.log(error)
                     })
 
-                axios
+                await axios
                     .post("/authusers/", formData)
                     .then(response => {
                         /* TODO: Faire un toast pour dir afficher le msg de success */
@@ -101,8 +101,11 @@ export default Vue.extend({
                         localStorage.setItem("token", token)
                         this.$store.commit('setToken', token)
 
-                        axios.defaults.headers.common["Authorization"] = "Bearer " + localStorage.getItem("token");
-                        window.location.reload(); // reload page
+                        axios.interceptors.request.use(config => {
+                           if (localStorage.getItem("token") != null)
+                             config.headers["Authorization"] = "Bearer " + localStorage.getItem("token");
+                           return config;
+                         });
                     })
                     .catch(error => {
                         if(error.response) {
@@ -116,24 +119,34 @@ export default Vue.extend({
                         }
                     })
                 }
-            this.getAuthUserData() // update user data
+            await this.getAuthUserData() // update user data
         },
 
-        getAuthUserData() {
-          axios
-            .get("/authusers/me/")
-            .then(response => {
-              const authenticatedUserData = JSON.stringify(response.data);
-              this.$store.commit('setAuthenticatedUserData', authenticatedUserData)
-              localStorage.setItem("authenticatedUserData",
-                      authenticatedUserData)
-              console.log("User details")
-              console.log(authenticatedUserData)
-            })
-            .then(() => window.location.reload())
-            .catch(error => {
-              console.log(error);
-            });
+        async getAuthUserData() {
+            console.log(localStorage.getItem("token"))
+            await axios
+                .get("/authusers/me/")
+                .then(response => {
+                  const authenticatedUserData = JSON.stringify(response.data);
+                  this.$store.commit('setAuthenticatedUserData', authenticatedUserData)
+                  localStorage.setItem("authenticatedUserData",
+                          authenticatedUserData)
+                  console.log("User details")
+                  console.log(authenticatedUserData)
+
+                  this.$fire({
+                    title: "SignUp...",
+                    text: "Successfully signed ! ",
+                    type: "success",
+                    timer: 3000
+                  }).then(r => {
+                   console.log(r.value);
+                  });
+                })
+                .then(() => window.location.reload())
+                .catch(error => {
+                  console.log(error);
+                });
         },
 
     },

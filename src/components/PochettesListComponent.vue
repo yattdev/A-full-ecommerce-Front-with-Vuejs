@@ -21,9 +21,11 @@
             <div class="trainer d-flex justify-content-between align-items-center">
               <button v-bind:class="(pochette.author_id !== authUser.id) ?
               'disabled trainer-profile mb-2 d-flex align-items-center btn btn-success btn-block':
-              'trainer-profile mb-2 d-flex align-items-center btn btn-success btn-block'">
+              'trainer-profile mb-2 d-flex align-items-center btn btn-success btn-block'"
+              data-toggle="modal" :data-target="'#modalUpdatePochetteForm'+pochette.title">
                 Update
               </button>
+              <update-pochette-component :propPochette="pochette"/>
               <button v-bind:class="(pochette.author_id !== authUser.id) ?
               'disabled trainer-profile mb-2 d-flex align-items-center btn btn-danger btn-block':
               'trainer-profile mb-2 d-flex align-items-center btn btn-danger btn-block'"
@@ -41,11 +43,13 @@
 <script>
 import { Vue } from 'vue-property-decorator';
 import axios from "axios"
+import UpdatePochette from '../views/UpdatePochette.vue';
 
 export default Vue.component('PochettesListComponent', {
     props: ['propPochettesList', 'propAuthUserList'],
     name: 'PochettesListComponent',
     components: {
+        "update-pochette-component": UpdatePochette,
     },
 
     data() {
@@ -67,14 +71,13 @@ export default Vue.component('PochettesListComponent', {
     },
 
     methods: {
-        removePochette(pochette){
-            this.$confirm("Are you sure?").then(() => {
+        async removePochette(pochette){
+            await this.$confirm("Are you sure?").then(() => {
                 axios
                     .delete('/pochettes/'+pochette.id+'/'+pochette.slug)
                     .then((response) => {
                         console.log(response.status)
                     })
-                    .then(() => window.location.reload())
                     .catch((error) => {
                         console.log(error)
                     })

@@ -124,11 +124,11 @@ export default Vue.extend({
                         }
                     })
                 }
-            this.getAuthUserData() // update user data
+            await this.getAuthUserData() // update user data
         },
 
-        getAuthUserData() {
-          axios
+        async getAuthUserData() {
+          await axios
             .get("/authusers/me/")
             .then(response => {
               const authenticatedUserData = JSON.stringify(response.data);
@@ -137,6 +137,16 @@ export default Vue.extend({
                       authenticatedUserData)
               console.log("User details")
               console.log(authenticatedUserData)
+
+              this.$fire({
+                title: "Login...",
+                text: "Successfully login ! ",
+                type: "success",
+                timer: 3000
+              })
+              .then(r => {
+               console.log(r.value);
+              });
             })
             .then(() => window.location.reload())
             .catch(error => {

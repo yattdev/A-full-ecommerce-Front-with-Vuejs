@@ -15,7 +15,7 @@ Vue.use(VueSimpleAlert);
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 
-axios.defaults.baseURL = "http://localhost:8000/api/v1";
+axios.defaults.baseURL = "https://album-pochette.herokuapp.com/api/v1";
 Vue.use(VueAxios, axios); // Use axios in Vue 3
 
 // import "./app.scss"; // my custom scss
